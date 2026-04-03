@@ -1,2 +1,2 @@
-# Vitreousll.github.io
+# Vitreusll.github.io
 Personal Website
