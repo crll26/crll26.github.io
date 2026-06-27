@@ -141,6 +141,16 @@
   }
   .progress:hover .knob { transform: translateX(-50%) scale(1); }
 
+  /* ── cat decoration ── */
+  .deco {
+    text-align: center;
+    padding: 0 0 8px;
+  }
+  .deco img {
+    width: 64px;
+    image-rendering: pixelated;
+  }
+
   footer {
     text-align: center;
     padding: 22px 0 30px;
@@ -185,6 +195,11 @@
       <audio id="audio" src="track.mp3" preload="metadata"></audio>
     </div>
   </main>
+
+  <div class="deco">
+    <img src="devil-cat.png" alt="">
+  </div>
+
   <footer>© 2026</footer>
 
 <script>
@@ -196,7 +211,6 @@
   var fill = document.getElementById('fill');
   var knob = document.getElementById('knob');
 
-  // silent on load — play only on click
   playBtn.addEventListener('click', function () {
     if (audio.paused) audio.play(); else audio.pause();
   });
