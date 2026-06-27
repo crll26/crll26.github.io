@@ -47,7 +47,7 @@
     width: 100%;
     aspect-ratio: 3 / 2;
     max-height: 58vh;
-    overflow: hidden;
+    overflow: visible;
     border-radius: 2px;
     background: #f1f1ec;
   }
@@ -58,7 +58,21 @@
     display: block;
     transition: transform .6s cubic-bezier(.2,.8,.2,1);
   }
-  .photo:hover img { transform: scale(1.03); }
+  .photo:hover img:not(.cat-sticker) { transform: scale(1.03); }
+
+  /* ── cat sticker ── */
+  .cat-sticker {
+    position: absolute;
+    top: -26px;
+    right: 24px;
+    width: 88px;
+    height: auto;
+    object-fit: contain;
+    image-rendering: pixelated;
+    pointer-events: none;
+    z-index: 1;
+    transform: none !important;
+  }
 
   /* ── minimal player ── */
   .player {
@@ -141,16 +155,6 @@
   }
   .progress:hover .knob { transform: translateX(-50%) scale(1); }
 
-  /* ── cat decoration ── */
-  .deco {
-    text-align: center;
-    padding: 0 0 8px;
-  }
-  .deco img {
-    width: 64px;
-    image-rendering: pixelated;
-  }
-
   footer {
     text-align: center;
     padding: 22px 0 30px;
@@ -170,6 +174,7 @@
 
       <div class="photo">
         <img src="photo.jpg" alt="">
+        <img src="devil-cat.png" alt="" class="cat-sticker">
       </div>
 
       <div class="player" id="player">
@@ -195,11 +200,6 @@
       <audio id="audio" src="track.mp3" preload="metadata"></audio>
     </div>
   </main>
-
-  <div class="deco">
-    <img src="devil-cat.png" alt="">
-  </div>
-
   <footer>© 2026</footer>
 
 <script>
