@@ -41,13 +41,23 @@
     gap: clamp(26px, 4vh, 40px);
   }
 
+  /* ── cat float ── */
+  .cat-float {
+    text-align: right;
+    margin-bottom: -14px;
+  }
+  .cat-float img {
+    width: 100px;
+    image-rendering: pixelated;
+  }
+
   /* ── photo ── */
   .photo {
     position: relative;
     width: 100%;
     aspect-ratio: 3 / 2;
     max-height: 58vh;
-    overflow: visible;
+    overflow: hidden;
     border-radius: 2px;
     background: #f1f1ec;
   }
@@ -58,21 +68,7 @@
     display: block;
     transition: transform .6s cubic-bezier(.2,.8,.2,1);
   }
-  .photo:hover img:not(.cat-sticker) { transform: scale(1.03); }
-
-  /* ── cat sticker ── */
-  .cat-sticker {
-    position: absolute;
-    top: -26px;
-    right: 24px;
-    width: 48px;
-    height: auto;
-    object-fit: contain;
-    image-rendering: pixelated;
-    pointer-events: none;
-    z-index: 1;
-    transform: none !important;
-  }
+  .photo:hover img { transform: scale(1.03); }
 
   /* ── minimal player ── */
   .player {
@@ -165,6 +161,7 @@
 
   @media (max-width: 540px) {
     .stack { max-width: 360px; gap: 28px; }
+    .cat-float img { width: 72px; }
   }
 </style>
 </head>
@@ -172,9 +169,12 @@
   <main>
     <div class="stack">
 
+      <div class="cat-float">
+        <img src="devil-cat.png" alt="">
+      </div>
+
       <div class="photo">
         <img src="photo.jpg" alt="">
-        <img src="devil-cat.png" alt="" class="cat-sticker">
       </div>
 
       <div class="player" id="player">
