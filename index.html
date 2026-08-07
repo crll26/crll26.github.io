@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){var t=new URLSearchParams(location.search).get('t');document.write('<script src="./dc-support.js'+(t?'?t='+encodeURIComponent(t):'')+'"><\/script>');})();</script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#F7F3EB;}
+body{font-family:'Noto Serif SC',serif;color:#22201C;-webkit-font-smoothing:antialiased;}
+a{color:#22201C;text-decoration:none;border-bottom:1px solid rgba(34,32,28,.35);padding-bottom:2px;transition:color .2s,border-color .2s;}
+a:hover{color:#B03A2E;border-bottom-color:#B03A2E;}
+@keyframes ringspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+::selection{background:rgba(176,58,46,.16);}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;">
+  <header style="display:flex;justify-content:space-between;align-items:baseline;padding:34px 52px;">
+    <span style="font-size:20px;font-weight:700;letter-spacing:6px;">观澜</span>
+    <nav style="display:flex;gap:30px;font-size:14px;letter-spacing:2px;">
+      <a href="https://github.com" target="_blank">GitHub</a>
+      <a href="./博客.dc.html">博客</a>
+      <a href="mailto:me@example.com">邮箱</a>
+    </nav>
+  </header>
+  <main style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:12px 24px 40px;">
+    <span style="font-size:12px;letter-spacing:8px;color:#B03A2E;">周易 · 先天六十四卦</span>
+    <div style="position:relative;width:min(600px,90vw);">
+    <svg viewBox="0 0 1000 1000" style="width:100%;height:auto;display:block;">
+      <circle cx="500" cy="500" r="381" fill="none" stroke="rgba(34,32,28,.25)" stroke-width="1"></circle>
+      <circle cx="500" cy="500" r="375" fill="none" stroke="rgba(34,32,28,.12)" stroke-width="1"></circle>
+      <circle cx="500" cy="500" r="257" fill="none" stroke="rgba(34,32,28,.18)" stroke-width="1"></circle>
+      <g style="{{ ringStyle }}">
+        <sc-for list="{{ hexes }}" as="h" hint-placeholder-count="16">
+          <g>
+            <path d="{{ h.d }}" fill="none" stroke="{{ h.stroke }}" stroke-width="6.5"></path>
+            <path d="{{ h.hit }}" fill="none" stroke="rgba(0,0,0,0)" stroke-width="30" style="cursor:pointer;" onMouseEnter="{{ h.enter }}" onMouseLeave="{{ h.leave }}" onClick="{{ h.click }}"></path>
+          </g>
+        </sc-for>
+      </g>
+      <circle cx="500" cy="500" r="216" fill="none" stroke="rgba(34,32,28,.2)" stroke-width="1.2"></circle>
+      <path d="{{ selD }}" fill="none" stroke="#22201C" stroke-width="11"></path>
+    </svg>
+    <div style="position:absolute;left:0;right:0;top:51.5%;display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;">
+      <span style="font-size:32px;font-weight:700;color:#22201C;line-height:1.2;">{{ selName }}</span>
+      <span style="font-size:13px;color:#8A8378;letter-spacing:2px;">{{ selMeta }}</span>
+      <span style="font-size:11px;color:#B0A99C;letter-spacing:3px;">{{ selComp }}</span>
+    </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;max-width:520px;">
+      <p style="text-align:center;font-size:14px;line-height:2.2;letter-spacing:3px;color:#8A8378;margin:0;text-wrap:pretty;">{{ selQuote }}</p>
+      <span style="font-size:12px;letter-spacing:3px;color:#B0A99C;">{{ selSrc }}</span>
+    </div>
+  </main>
+  <footer style="display:flex;justify-content:center;padding:22px;font-size:12px;letter-spacing:2px;color:#B0A99C;">© 2026 观澜 </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#B03A2E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#B03A2E&quot;,&quot;#2C5F7C&quot;,&quot;#4A6B4F&quot;,&quot;#A8842C&quot;],&quot;section&quot;:&quot;圆图&quot;},&quot;autoRotate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;圆图&quot;}}">
+class Component extends DCLogic {
+  state = { hover: null, pinned: 0 };
+  constructor(props) {
+    super(props);
+    const TRI = {'111':['乾','天'],'110':['兑','泽'],'101':['离','火'],'100':['震','雷'],'011':['巽','风'],'010':['坎','水'],'001':['艮','山'],'000':['坤','地']};
+    // King Wen order: [name, lower trigram bits, upper trigram bits] (bits bottom-to-top, 1=yang)
+    const KW = [['乾','111','111','元亨,利贞。'],['坤','000','000','元亨,利牝马之贞。君子有攸往,先迷后得主。安贞吉。'],['屯','100','010','元亨利贞。勿用有攸往,利建侯。'],['蒙','010','001','亨。匪我求童蒙,童蒙求我。利贞。'],['需','111','010','有孚,光亨,贞吉。利涉大川。'],['讼','010','111','有孚窒惕,中吉,终凶。利见大人,不利涉大川。'],['师','010','000','贞,丈人吉,无咎。'],['比','000','010','吉。原筮,元永贞,无咎。'],['小畜','111','011','亨。密云不雨,自我西郊。'],['履','110','111','履虎尾,不咥人,亨。'],['泰','111','000','小往大来,吉亨。'],['否','000','111','否之匪人,不利君子贞,大往小来。'],['同人','101','111','同人于野,亨。利涉大川,利君子贞。'],['大有','111','101','元亨。'],['谦','001','000','亨,君子有终。'],['豫','000','100','利建侯行师。'],['随','100','110','元亨利贞,无咎。'],['蛊','011','001','元亨,利涉大川。先甲三日,后甲三日。'],['临','110','000','元亨利贞。至于八月有凶。'],['观','000','011','盥而不荐,有孚颙若。'],['噬嗑','100','101','亨。利用狱。'],['贲','101','001','亨。小利有攸往。'],['剥','000','001','不利有攸往。'],['复','100','000','亨。出入无疾,朋来无咎。七日来复,利有攸往。'],['无妄','100','111','元亨利贞。其匪正有眚,不利有攸往。'],['大畜','111','001','利贞。不家食吉,利涉大川。'],['颐','100','001','贞吉。观颐,自求口实。'],['大过','011','110','栋桡。利有攸往,亨。'],['坎','010','010','有孚,维心亨,行有尚。'],['离','101','101','利贞,亨。畜牝牛吉。'],['咸','001','110','亨,利贞。取女吉。'],['恒','011','100','亨,无咎,利贞。利有攸往。'],['遁','001','111','亨。小利贞。'],['大壮','111','100','利贞。'],['晋','000','101','康侯用锡马蕃庶,昼日三接。'],['明夷','101','000','利艰贞。'],['家人','101','011','利女贞。'],['睽','110','101','小事吉。'],['蹇','001','010','利西南,不利东北。利见大人,贞吉。'],['解','010','100','利西南。无所往,其来复吉。有攸往,夙吉。'],['损','110','001','有孚,元吉,无咎,可贞。利有攸往。'],['益','100','011','利有攸往,利涉大川。'],['夬','111','110','扬于王庭,孚号有厉。利有攸往。'],['姤','011','111','女壮,勿用取女。'],['萃','000','110','亨。王假有庙,利见大人。用大牲吉,利有攸往。'],['升','011','000','元亨。用见大人,勿恤。南征吉。'],['困','010','110','亨。贞,大人吉,无咎。有言不信。'],['井','011','010','改邑不改井,无丧无得,往来井井。'],['革','101','110','巳日乃孚。元亨利贞,悔亡。'],['鼎','011','101','元吉,亨。'],['震','100','100','亨。震来虩虩,笑言哑哑。震惊百里,不丧匕鬯。'],['艮','001','001','艮其背,不获其身;行其庭,不见其人。无咎。'],['渐','001','011','女归吉,利贞。'],['归妹','110','100','征凶,无攸利。'],['丰','101','100','亨。王假之,勿忧,宜日中。'],['旅','001','101','小亨。旅贞吉。'],['巽','011','011','小亨。利有攸往,利见大人。'],['兑','110','110','亨,利贞。'],['涣','010','011','亨。王假有庙,利涉大川,利贞。'],['节','110','010','亨。苦节不可贞。'],['中孚','110','011','豚鱼吉。利涉大川,利贞。'],['小过','001','100','亨,利贞。可小事,不可大事。'],['既济','101','010','亨小,利贞。初吉终乱。'],['未济','010','101','亨。小狐汔济,濡其尾,无攸利。']];
+    const P = (r, a) => { const t = a * Math.PI / 180; return (500 + r * Math.cos(t)).toFixed(1) + ' ' + (500 + r * Math.sin(t)).toFixed(1); };
+    this.hexData = KW.map((e, i) => {
+      const [name, lo, up, gz] = e, bits = lo + up;
+      const [ln, le] = TRI[lo], [un, ue] = TRI[up];
+      const full = lo === up ? name + '为' + le : ue + le + name;
+      let d = '';
+      for (let k = 0; k < 6; k++) {
+        const y = 485 - k * 26;
+        d += bits[k] === '1' ? `M435 ${y}L565 ${y}` : `M435 ${y}L487 ${y}M513 ${y}L565 ${y}`;
+      }
+      return { name, bits, gz, num: i + 1, full, comp: '上' + un + ' · 下' + ln, selD: d, sort: parseInt([...bits].reverse().join(''), 2) };
+    });
+    // Fuxi (binary) circle order, 乾 at top going clockwise
+    this.order = [...this.hexData].sort((a, b) => b.sort - a.sort);
+    this.order.forEach((h, i) => {
+      const A = -90 + i * (360 / 64);
+      let d = '';
+      for (let k = 0; k < 6; k++) {
+        const r = 273 + k * 17, hw = 1.72, g = 0.47;
+        d += h.bits[k] === '1'
+          ? `M${P(r, A - hw)}L${P(r, A + hw)}`
+          : `M${P(r, A - hw)}L${P(r, A - g)}M${P(r, A + g)}L${P(r, A + hw)}`;
+      }
+      h.d = d;
+      h.hit = `M${P(263, A)}L${P(369, A)}`;
+    });
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#B03A2E';
+    const cur = this.state.hover ?? this.state.pinned;
+    const sel = this.hexData[cur];
+    const hexes = this.order.map(h => ({
+      d: h.d, hit: h.hit,
+      stroke: (h.num - 1) === cur ? accent : '#22201C',
+      enter: () => this.setState({ hover: h.num - 1 }),
+      leave: () => this.setState({ hover: null }),
+      click: () => this.setState({ pinned: h.num - 1 })
+    }));
+    return {
+      hexes,
+      selD: sel.selD, selName: sel.name,
+      selMeta: `第 ${sel.num} 卦 · ${sel.full}`,
+      selComp: sel.comp,
+      selQuote: sel.gz,
+      selSrc: `——《周易 · ${sel.full}》`,
+      ringStyle: (this.props.autoRotate ?? false)
+        ? { transformOrigin: '500px 500px', animation: 'ringspin 240s linear infinite' }
+        : {}
+    };
+  }
+}
+</script>
+</body>
+</html>
